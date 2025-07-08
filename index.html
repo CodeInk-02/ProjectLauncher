@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TechSelec - Sci-Fi Missile Launch</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+    #starfield {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      z-index: 0;
+      background: #0a0a1a;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(2px 2px at 160px 30px, #ddd, transparent);
+      background-repeat: repeat;
+      background-size: 200px 100px;
+      animation: stars 20s linear infinite;
+    }
+    
+    @keyframes stars {
+      from { transform: translateX(0); }
+      to { transform: translateX(-200px); }
+    }
+    h1 {
+      font-size: 3rem;
+      letter-spacing: 4px;
+      margin-bottom: 2.5rem;
+      text-shadow: 0 0 24px #00ffe7, 0 2px 0 #fff2;
+      z-index: 2;
+      text-align: center;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+    }
+    .button-row {
+      display: flex;
+      gap: 5rem;
+      z-index: 2;
+      justify-content: center;
+      align-items: flex-end;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .launch-panel {
+      background: linear-gradient(135deg, #181a2b 80%, #23243a 100%);
+      border: 2px solid #00ffe733;
+      border-radius: 2.5rem;
+      box-shadow: 0 0 32px #00ffe722, 0 2px 16px #000a;
+      padding: 2.5rem 2.5rem 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 260px;
+      min-height: 300px;
+      position: relative;
+      margin: 0 1rem;
+    }
+    /* --- GEAR BUTTON --- */
+    .gear-launch-btn {
+      --gear-size: 170px;
+      --gear-bg: linear-gradient(135deg, #23243a 60%, #00ffe7 100%);
+      --gear-glow: #00ffe7;
+      --gear-glow2: #ff00e7;
+      --gear-metal: linear-gradient(120deg, #23243a 60%, #3a3a5a 100%);
+      position: relative;
+      width: var(--gear-size);
+      height: var(--gear-size);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      outline: none;
+      border: none;
+      background: none;
+      text-decoration: none;
+      color: #fff;
+      z-index: 2;
+      filter: drop-shadow(0 0 12px #00ffe7cc);
+      transition: filter 0.2s, transform 0.18s cubic-bezier(.4,2,.6,1);
+      margin-bottom: 0.5rem;
+      perspective: 800px;
+    }
+    .gear-launch-btn .gear-bg {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border-radius: 50%;
+      background: var(--gear-bg);
+      box-shadow:
+        0 0 32px 8px var(--gear-glow),
+        0 0 0 8px #0a0a1a,
+        0 8px 32px #000a;
+      z-index: 1;
+      transition: background 0.3s;
+    }
+    .gear-launch-btn .gear-metal {
+      position: absolute;
+      top: 10%; left: 10%; width: 80%; height: 80%;
+      border-radius: 50%;
+      background: var(--gear-metal);
+      box-shadow: 0 0 16px #00ffe799 inset, 0 0 8px #fff2 inset;
+      z-index: 2;
+    }
+    .gear-launch-btn .gear-glass {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(120deg, #fff3 10%, #fff0 80%);
+      z-index: 3;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    .gear-launch-btn .gear-glow-anim {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 50%, var(--gear-glow2) 0%, transparent 70%);
+      opacity: 0.18;
+      z-index: 4;
+      animation: gear-pulse 2s infinite;
+      pointer-events: none;
+    }
+    @keyframes gear-pulse {
+      0% { opacity: 0.18; }
+      50% { opacity: 0.32; }
+      100% { opacity: 0.18; }
+    }
+    .gear-launch-btn .gear-label {
+      position: relative;
+      z-index: 10;
+      font-size: 1.3rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      color: #fff;
+      text-shadow: 0 0 8px #00ffe7cc, 0 1px 0 #fff2;
+      font-family: 'Orbitron', 'Segoe UI', Arial, sans-serif;
+      user-select: none;
+      pointer-events: none;
+      margin-top: 0.5rem;
+    }
+    .gear-launch-btn .gear-energy {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, #00ffe7 0%, #ff00e7 100%);
+      border-radius: 2px;
+      box-shadow: 0 0 16px #00ffe7cc, 0 0 8px #ff00e7cc;
+      transform: translate(-50%, -50%) scaleX(0.7);
+      opacity: 0.7;
+      z-index: 10;
+      animation: energy-move 1.2s infinite linear;
+      pointer-events: none;
+    }
+    @keyframes energy-move {
+      0% { width: 60%; opacity: 0.7; }
+      50% { width: 80%; opacity: 1; }
+      100% { width: 60%; opacity: 0.7; }
+    }
+    .gear-launch-btn .gear-armed {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle, #00ffe7 60%, #fff 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 12px #00ffe7, 0 0 2px #fff;
+      z-index: 10;
+      animation: armed-blink 1s infinite alternate;
+      border: 2px solid #fff2;
+    }
+    
+    /* Vertical Gear teeth - Top and Bottom */
+    .gear-launch-btn::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 0;
+      width: 100%;
+      height: 24px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 20px,
+        #00ffe7 20px,
+        #00ffe7 30px,
+        transparent 30px,
+        transparent 50px
+      );
+      border-radius: 4px;
+      z-index: 0;
+      box-shadow: 0 0 16px #00ffe7cc;
+    }
+    
+    .gear-launch-btn::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 0;
+      width: 100%;
+      height: 24px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        transparent 20px,
+        #00ffe7 20px,
+        #00ffe7 30px,
+        transparent 30px,
+        transparent 50px
+      );
+      border-radius: 4px;
+      z-index: 0;
+      box-shadow: 0 0 16px #00ffe7cc;
+    }
+    @keyframes armed-blink {
+      0% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    
+    .gear-launch-btn:hover, .gear-launch-btn:focus {
+      filter: brightness(1.1) drop-shadow(0 0 24px #ff00e7cc);
+      transform: scale(1.04) translateY(-8px);
+    }
+    .gear-launch-btn:hover::before, .gear-launch-btn:focus::before {
+      transform: translateY(-4px);
+    }
+    .gear-launch-btn:hover::after, .gear-launch-btn:focus::after {
+      transform: translateY(-4px);
+    }
+    .gear-launch-btn:active {
+      filter: brightness(0.95) drop-shadow(0 0 8px #00ffe7cc);
+      transform: scale(0.97) translateY(8px);
+      transition: filter 0.1s, transform 0.1s;
+    }
+    .gear-launch-btn:active::before {
+      transform: translateY(4px);
+    }
+    .gear-launch-btn:active::after {
+      transform: translateY(4px);
+    }
+    
+
+    
+    /* Responsive */
+    @media (max-width: 900px) {
+      .button-row { gap: 2rem; }
+      .launch-panel { min-width: 180px; padding: 1.5rem 1rem 1rem 1rem; }
+      .gear-launch-btn { --gear-size: 120px; }
+    }
+    @media (max-width: 600px) {
+      .button-row { flex-direction: column; gap: 2.5rem; }
+      .launch-panel { min-width: 0; width: 100%; }
+      .gear-launch-btn { --gear-size: 90px; }
+    }
+  </style>
+  <!-- Orbitron font for sci-fi look -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="starfield"></div>
+  <h1>TechSelec<br><span style="font-size:1.2rem;letter-spacing:2px;color:#00ffe7;text-shadow:0 0 8px #00ffe7cc;">Missile Launch Control</span></h1>
+  <div class="button-row">
+    <div class="launch-panel">
+      <a href="https://www.google.com" class="gear-launch-btn" id="launch1" target="_blank">
+        <div class="gear-bg"></div>
+        <div class="gear-metal"></div>
+        <div class="gear-glass"></div>
+        <div class="gear-glow-anim"></div>
+        <div class="gear-armed"></div>
+        <div class="gear-energy"></div>
+        <span class="gear-label">LAUNCH A</span>
+      </a>
+    </div>
+    <div class="launch-panel">
+      <a href="https://www.github.com" class="gear-launch-btn" id="launch2" target="_blank">
+        <div class="gear-bg"></div>
+        <div class="gear-metal"></div>
+        <div class="gear-glass"></div>
+        <div class="gear-glow-anim"></div>
+        <div class="gear-armed"></div>
+        <div class="gear-energy"></div>
+        <span class="gear-label">LAUNCH B</span>
+      </a>
+    </div>
+  </div>
+
+</body>
+</html>
